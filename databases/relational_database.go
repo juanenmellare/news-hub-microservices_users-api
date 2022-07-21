@@ -2,6 +2,7 @@ package databases
 
 import (
 	"gorm.io/gorm"
+	"news-hub-microservices_users-api/models"
 )
 
 type RelationalDatabase interface {
@@ -28,9 +29,12 @@ func (r relationDatabaseImpl) Get() *gorm.DB {
 }
 
 func (r relationDatabaseImpl) DoMigration() {
+	// For UUIDs run in DB -> CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 	migrator := r.Get().Migrator()
 
-	var modelsToAutoMigrate []interface{}
+	modelsToAutoMigrate := []interface{}{
+		&models.User{},
+	}
 
 	for _, model := range modelsToAutoMigrate {
 		handleMigrationErr(migrator.AutoMigrate(model))
