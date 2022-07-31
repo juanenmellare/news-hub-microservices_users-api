@@ -7,39 +7,38 @@ import (
 	"testing"
 )
 
-func TestNewApiError(t *testing.T) {
-	status := "internal server error"
-	statusCode := http.StatusInternalServerError
+func Test_NewApiError(t *testing.T) {
+	code := http.StatusInternalServerError
 	err := errors.New("panic")
 
-	apiError := newApiError(status, statusCode, err)
+	apiError := newApiError(code, err.Error())
 
-	assert.Equal(t, status, apiError.Status)
-	assert.Equal(t, statusCode, apiError.StatusCode)
+	assert.Equal(t, "Internal Server Error", apiError.Status)
+	assert.Equal(t, code, apiError.Code)
 	assert.Equal(t, err.Error(), apiError.Message)
 }
 
-func TestNewInternalServerApiError(t *testing.T) {
+func Test_NewInternalServerApiError(t *testing.T) {
 	err := errors.New("panic")
 
-	apiError := NewInternalServerApiError(err)
+	apiError := NewInternalServerApiError(err.Error())
 
-	assert.Equal(t, "internal server error", apiError.Status)
-	assert.Equal(t, http.StatusInternalServerError, apiError.StatusCode)
+	assert.Equal(t, "Internal Server Error", apiError.Status)
+	assert.Equal(t, http.StatusInternalServerError, apiError.Code)
 	assert.Equal(t, err.Error(), apiError.Message)
 }
 
-func TestNewBadRequestApiError(t *testing.T) {
+func Test_NewBadRequestApiError(t *testing.T) {
 	err := errors.New("panic")
 
-	apiError := NewBadRequestApiError(err)
+	apiError := NewBadRequestApiError(err.Error())
 
-	assert.Equal(t, "bad request", apiError.Status)
-	assert.Equal(t, http.StatusBadRequest, apiError.StatusCode)
+	assert.Equal(t, "Bad Request", apiError.Status)
+	assert.Equal(t, http.StatusBadRequest, apiError.Code)
 	assert.Equal(t, err.Error(), apiError.Message)
 }
 
-func TestNewError(t *testing.T) {
+func Test_NewError(t *testing.T) {
 	message := "panic"
 	err := NewError(message)
 
@@ -47,12 +46,32 @@ func TestNewError(t *testing.T) {
 	assert.Equal(t, message, err.Error())
 }
 
-func TestNewNotFoundError(t *testing.T) {
+func Test_NewNotFoundError(t *testing.T) {
 	err := errors.New("panic")
 
-	apiError := NewNotFoundError(err)
+	apiError := NewNotFoundError(err.Error())
 
-	assert.Equal(t, "not found", apiError.Status)
-	assert.Equal(t, http.StatusNotFound, apiError.StatusCode)
+	assert.Equal(t, "Not Found", apiError.Status)
+	assert.Equal(t, http.StatusNotFound, apiError.Code)
 	assert.Equal(t, err.Error(), apiError.Message)
+}
+
+func Test_NewRequestFieldsShouldNotBeEmptyError_oneField(t *testing.T) {
+	fields := []string{"foo"}
+
+	apiError := NewRequestFieldsShouldNotBeEmptyError(fields)
+
+	assert.Equal(t, "Bad Request", apiError.Status)
+	assert.Equal(t, http.StatusBadRequest, apiError.Code)
+	assert.Equal(t, "the field 'foo' should not be empty", apiError.Message)
+}
+
+func Test_NewRequestFieldsShouldNotBeEmptyError_multiFields(t *testing.T) {
+	fields := []string{"foo", "foo2"}
+
+	apiError := NewRequestFieldsShouldNotBeEmptyError(fields)
+
+	assert.Equal(t, "Bad Request", apiError.Status)
+	assert.Equal(t, http.StatusBadRequest, apiError.Code)
+	assert.Equal(t, "the fields 'foo, foo2' should not be empty", apiError.Message)
 }

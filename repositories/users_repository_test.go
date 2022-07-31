@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestNewUsersRepository(t *testing.T) {
+func Test_NewUsersRepository(t *testing.T) {
 	var relationalDatabase databases.RelationalDatabase
 
 	assert.Implements(t, (*UsersRepository)(nil), NewUsersRepository(relationalDatabase))

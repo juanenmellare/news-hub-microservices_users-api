@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestNewUsersService(t *testing.T) {
+func Test_NewUsersService(t *testing.T) {
 	var userRepository repositories.UsersRepository
 
 	assert.Implements(t, (*UsersService)(nil), NewUsersService(userRepository))
