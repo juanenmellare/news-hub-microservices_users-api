@@ -12,6 +12,8 @@ func HandlePanicRecoveryMiddleware(context *gin.Context, i interface{}) {
 	switch err := i.(type) {
 	case *errors.ApiError:
 		apiError = err
+	case *errors.AlreadyExistModelError:
+		apiError = errors.NewBadRequestApiError(err.Message)
 	case error:
 		apiError = errors.NewInternalServerApiError(fmt.Sprintf("unexpected error: %v", err))
 	default:

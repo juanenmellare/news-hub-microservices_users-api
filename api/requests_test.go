@@ -105,3 +105,27 @@ func Test_CreateUserRequest_MarshallAndValidate_Panic_missingFields(t *testing.T
 
 	createUserRequest.MarshallAndValidate(context)
 }
+
+func Test_CreateUserRequest_ToUserModel(t *testing.T) {
+	firstName := "firstName"
+	lastName := "lastName"
+	email := "email"
+	password := "password"
+	passwordRepeat := "password"
+
+	createUserRequest := &CreateUserRequest{
+		FirstName:      &firstName,
+		LastName:       &lastName,
+		Email:          &email,
+		Password:       &password,
+		PasswordRepeat: &passwordRepeat,
+	}
+
+	user := createUserRequest.ToUserModel()
+
+	assert.Equal(t, firstName, user.FirstName)
+	assert.Equal(t, lastName, user.LastName)
+	assert.Equal(t, email, user.Email)
+	assert.Equal(t, password, user.Password)
+	assert.Equal(t, passwordRepeat, user.Password)
+}

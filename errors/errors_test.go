@@ -75,3 +75,9 @@ func Test_NewRequestFieldsShouldNotBeEmptyError_multiFields(t *testing.T) {
 	assert.Equal(t, http.StatusBadRequest, apiError.Code)
 	assert.Equal(t, "the fields 'foo, foo2' should not be empty", apiError.Message)
 }
+
+func TestNewAlreadyExistModelError(t *testing.T) {
+	err := NewAlreadyExistModelError("foo")
+
+	assert.Equal(t, "foo already exist", err.Message)
+}

@@ -19,7 +19,11 @@ func (u usersControllerImpl) Create(context *gin.Context) {
 	var createUserRequest api.CreateUserRequest
 	createUserRequest.MarshallAndValidate(context)
 
-	context.JSON(http.StatusCreated, createUserRequest)
+	user := createUserRequest.ToUserModel()
+
+	u.userService.Create(user)
+
+	context.JSON(http.StatusCreated, &user)
 }
 
 func NewUsersController(userService services.UsersService) UsersController {

@@ -10,3 +10,13 @@ type User struct {
 	Password  string    `json:"password" gorm:"column:password"`
 	Salt      string    `json:"salt" gorm:"column:salt"`
 }
+
+func NewUser(firstName, lastName, email, password string) *User {
+	return &User{
+		FirstName: firstName,
+		LastName:  lastName,
+		Email:     email,
+		Password:  password,
+		Salt:      "10",
+	}
+}

@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"news-hub-microservices_users-api/errors"
+	"news-hub-microservices_users-api/models"
 	"news-hub-microservices_users-api/utils"
 )
 
@@ -48,4 +49,8 @@ func (r *CreateUserRequest) MarshallAndValidate(context *gin.Context) {
 	if *r.Password != *r.PasswordRepeat {
 		panic(errors.NewBadRequestApiError("the fields 'password' and 'passwordRepeat' doesn't match"))
 	}
+}
+
+func (r CreateUserRequest) ToUserModel() *models.User {
+	return models.NewUser(*r.FirstName, *r.LastName, *r.Email, *r.Password)
 }

@@ -45,3 +45,11 @@ func NewRequestFieldsShouldNotBeEmptyError(fields []string) *ApiError {
 	}
 	return NewBadRequestApiError(fmt.Sprintf("the %s '%s' should not be empty", grammaticalNumber, fieldString))
 }
+
+type AlreadyExistModelError struct {
+	Message string `json:"message"`
+}
+
+func NewAlreadyExistModelError(message string) *AlreadyExistModelError {
+	return &AlreadyExistModelError{Message: fmt.Sprintf("%s already exist", message)}
+}

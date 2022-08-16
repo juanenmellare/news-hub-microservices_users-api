@@ -31,6 +31,16 @@ func Test_New(t *testing.T) {
 	s.Close()
 }
 
+func Test_HandlePanicRecoveryMiddleware_apiError_NewAlreadyExistModelError(t *testing.T) {
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+
+	HandlePanicRecoveryMiddleware(c, errors.NewAlreadyExistModelError("foo"))
+
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Equal(t, "{\"code\":400,\"status\":\"Bad Request\",\"message\":\"foo already exist\"}", w.Body.String())
+}
+
 func Test_HandlePanicRecoveryMiddleware_unexpected_apiError(t *testing.T) {
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
