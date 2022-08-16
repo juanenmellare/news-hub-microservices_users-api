@@ -2,35 +2,54 @@ package errors
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
+	"strings"
 )
 
 type ApiError struct {
-	Message    string `json:"message"`
-	Status     string `json:"status"`
-	StatusCode int    `json:"status_code"`
+	Code    int    `json:"code"`
+	Status  string `json:"status"`
+	Message string `json:"message"`
 }
 
 func NewError(message string) error {
 	return errors.New(message)
 }
 
-func newApiError(status string, statusCode int, err error) *ApiError {
+func newApiError(code int, message string) *ApiError {
 	return &ApiError{
-		Status:     status,
-		StatusCode: statusCode,
-		Message:    err.Error(),
+		Status:  http.StatusText(code),
+		Code:    code,
+		Message: message,
 	}
 }
 
-func NewInternalServerApiError(err error) *ApiError {
-	return newApiError("internal server error", http.StatusInternalServerError, err)
+func NewInternalServerApiError(message string) *ApiError {
+	return newApiError(http.StatusInternalServerError, message)
 }
 
-func NewBadRequestApiError(err error) *ApiError {
-	return newApiError("bad request", http.StatusBadRequest, err)
+func NewBadRequestApiError(message string) *ApiError {
+	return newApiError(http.StatusBadRequest, message)
 }
 
-func NewNotFoundError(err error) *ApiError {
-	return newApiError("not found", http.StatusNotFound, err)
+func NewNotFoundError(message string) *ApiError {
+	return newApiError(http.StatusNotFound, message)
+}
+
+func NewRequestFieldsShouldNotBeEmptyError(fields []string) *ApiError {
+	fieldString := strings.Join(fields, ", ")
+	grammaticalNumber := "field"
+	if len(fields) > 1 {
+		grammaticalNumber = grammaticalNumber + "s"
+	}
+	return NewBadRequestApiError(fmt.Sprintf("the %s '%s' should not be empty", grammaticalNumber, fieldString))
+}
+
+type AlreadyExistModelError struct {
+	Message string `json:"message"`
+}
+
+func NewAlreadyExistModelError(message string) *AlreadyExistModelError {
+	return &AlreadyExistModelError{Message: fmt.Sprintf("%s already exist", message)}
 }

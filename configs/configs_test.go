@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestConfigImpl_GetPort(t *testing.T) {
+func Test_ConfigImpl_GetPort(t *testing.T) {
 	expectedValue := "0000"
 	_ = os.Setenv("PORT", expectedValue)
 
@@ -16,7 +16,7 @@ func TestConfigImpl_GetPort(t *testing.T) {
 	assert.Equal(t, expectedValue, config.GetPort())
 }
 
-func TestConfigImpl_GetPort_default(t *testing.T) {
+func Test_ConfigImpl_GetPort_default(t *testing.T) {
 	_ = os.Unsetenv("PORT")
 
 	config := NewConfig()
@@ -24,7 +24,7 @@ func TestConfigImpl_GetPort_default(t *testing.T) {
 	assert.Equal(t, "8081", config.GetPort())
 }
 
-func TestConfigImpl_GetDatabasePort(t *testing.T) {
+func Test_ConfigImpl_GetDatabasePort(t *testing.T) {
 	expectedValue := "5431"
 	_ = os.Setenv("DATABASE_PORT", expectedValue)
 
@@ -33,7 +33,7 @@ func TestConfigImpl_GetDatabasePort(t *testing.T) {
 	assert.Equal(t, expectedValue, config.GetDatabasePort())
 }
 
-func TestConfigImpl_GetDatabasePort_default(t *testing.T) {
+func Test_ConfigImpl_GetDatabasePort_default(t *testing.T) {
 	_ = os.Unsetenv("DATABASE_PORT")
 
 	config := NewConfig()
