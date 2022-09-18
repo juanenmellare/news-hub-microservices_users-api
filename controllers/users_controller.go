@@ -13,7 +13,9 @@ type UsersController interface {
 }
 
 type usersControllerImpl struct {
-	userService services.UsersService
+	userService              services.UsersService
+	userTokenSecretKey       string
+	userTokenExpirationHours int
 }
 
 func (u usersControllerImpl) Create(context *gin.Context) {
@@ -35,13 +37,15 @@ func (u usersControllerImpl) Authenticate(context *gin.Context) {
 
 	token := api.NewUserToken(8, user)
 
-	response := api.NewAuthenticateResponse(token, "hello_world")
+	response := api.NewAuthenticateResponse(token, "foo")
 
 	context.JSON(http.StatusOK, &response)
 }
 
-func NewUsersController(userService services.UsersService) UsersController {
+func NewUsersController(userService services.UsersService, userTokenSecretKey string, userTokenExpirationHours int) UsersController {
 	return &usersControllerImpl{
 		userService,
+		userTokenSecretKey,
+		userTokenExpirationHours,
 	}
 }

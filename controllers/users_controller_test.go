@@ -18,7 +18,7 @@ import (
 func Test_NewUsersController(t *testing.T) {
 	var userService services.UsersService
 
-	assert.Implements(t, (*UsersController)(nil), NewUsersController(userService))
+	assert.Implements(t, (*UsersController)(nil), NewUsersController(userService, "", 1))
 }
 
 func Test_usersControllerImpl_Create(t *testing.T) {
@@ -35,7 +35,7 @@ func Test_usersControllerImpl_Create(t *testing.T) {
 	usersServiceMock.On("Create", userMock.FirstName, userMock.LastName, userMock.Email, userMock.Password).
 		Return(userMock.ID)
 
-	controller := NewUsersController(&usersServiceMock)
+	controller := NewUsersController(&usersServiceMock, "", 1)
 
 	writer := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(writer)
@@ -70,7 +70,7 @@ func Test_usersControllerImpl_Authenticate(t *testing.T) {
 	var usersServiceMock mocks.UsersService
 	usersServiceMock.On("Authenticate", userMock.Email, userMock.Password).Return(&userMock)
 
-	controller := NewUsersController(&usersServiceMock)
+	controller := NewUsersController(&usersServiceMock, "", 1)
 
 	writer := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(writer)

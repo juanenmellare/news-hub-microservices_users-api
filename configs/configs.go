@@ -15,27 +15,33 @@ type Config interface {
 	GetDatabaseUser() string
 	GetDatabasePass() string
 	GetBCryptCost() int
+	GetTokenUserSecretKey() string
+	GetTokenUserExpirationHours() int
 }
 
 type configImpl struct {
-	port         string
-	databaseHost string
-	databaseName string
-	databasePort string
-	databaseUser string
-	databasePass string
-	bCryptCost   int
+	port                     string
+	databaseHost             string
+	databaseName             string
+	databasePort             string
+	databaseUser             string
+	databasePass             string
+	bCryptCost               int
+	userTokenSecretKey       string
+	userTokenExpirationHours int
 }
 
 func NewConfig() Config {
 	return &configImpl{
-		port:         getStringValueOrDefault("PORT", "8081"),
-		databaseHost: getStringValueOrDefault("DATABASE_HOST", "localhost"),
-		databaseName: getStringValueOrDefault("DATABASE_NAME", "development.news-hub_users-api"),
-		databasePort: getStringValueOrDefault("DATABASE_PORT", "5432"),
-		databaseUser: getStringValueOrDefault("DATABASE_USER", "admin"),
-		databasePass: getStringValueOrDefault("DATABASE_PASS", "news-hub.2022"),
-		bCryptCost:   getIntValueOrDefault("BCRYPT_COST", bcrypt.MinCost),
+		port:                     getStringValueOrDefault("PORT", "8081"),
+		databaseHost:             getStringValueOrDefault("DATABASE_HOST", "localhost"),
+		databaseName:             getStringValueOrDefault("DATABASE_NAME", "development.news-hub_users-api"),
+		databasePort:             getStringValueOrDefault("DATABASE_PORT", "5432"),
+		databaseUser:             getStringValueOrDefault("DATABASE_USER", "admin"),
+		databasePass:             getStringValueOrDefault("DATABASE_PASS", "news-hub.2022"),
+		bCryptCost:               getIntValueOrDefault("BCRYPT_COST", bcrypt.MinCost),
+		userTokenSecretKey:       getStringValueOrDefault("USER_TOKEN_SECRET_KEY", "foo"),
+		userTokenExpirationHours: getIntValueOrDefault("USER_TOKEN_EXPIRATION_HOURS", 1),
 	}
 }
 
@@ -88,4 +94,12 @@ func (c configImpl) GetDatabasePass() string {
 
 func (c configImpl) GetBCryptCost() int {
 	return c.bCryptCost
+}
+
+func (c configImpl) GetTokenUserSecretKey() string {
+	return c.userTokenSecretKey
+}
+
+func (c configImpl) GetTokenUserExpirationHours() int {
+	return c.userTokenExpirationHours
 }

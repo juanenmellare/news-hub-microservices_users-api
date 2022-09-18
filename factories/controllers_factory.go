@@ -15,7 +15,7 @@ func buildHealthChecksController() controllers.HealthChecksController {
 func buildUsersController(relationalDatabase databases.RelationalDatabase, config configs.Config) controllers.UsersController {
 	usersRepository := repositories.NewUsersRepository(relationalDatabase)
 	userService := services.NewUsersService(usersRepository, config.GetBCryptCost())
-	usersController := controllers.NewUsersController(userService)
+	usersController := controllers.NewUsersController(userService, config.GetTokenUserSecretKey(), config.GetTokenUserExpirationHours())
 
 	return usersController
 }
