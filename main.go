@@ -23,7 +23,7 @@ func main() {
 	relationalDatabase := databases.NewConnection(gorm.Open(postgres.Open(connectionString), &gorm.Config{}))
 	relationalDatabase.DoMigration()
 
-	domainLayersFactory := factories.NewControllersFactory(relationalDatabase)
+	domainLayersFactory := factories.NewControllersFactory(relationalDatabase, config)
 
 	port := ":" + config.GetPort()
 	if err := router.New(domainLayersFactory).Run(port); err != nil {

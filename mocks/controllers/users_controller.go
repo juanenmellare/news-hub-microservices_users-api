@@ -12,6 +12,11 @@ type UsersController struct {
 	mock.Mock
 }
 
+// Authenticate provides a mock function with given fields: context
+func (_m *UsersController) Authenticate(context *gin.Context) {
+	_m.Called(context)
+}
+
 // Create provides a mock function with given fields: context
 func (_m *UsersController) Create(context *gin.Context) {
 	_m.Called(context)

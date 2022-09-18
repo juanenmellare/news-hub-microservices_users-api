@@ -3,7 +3,6 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"news-hub-microservices_users-api/errors"
-	"news-hub-microservices_users-api/models"
 	"news-hub-microservices_users-api/utils"
 )
 
@@ -51,6 +50,15 @@ func (r *CreateUserRequest) MarshallAndValidate(context *gin.Context) {
 	}
 }
 
-func (r CreateUserRequest) ToUserModel() *models.User {
-	return models.NewUser(*r.FirstName, *r.LastName, *r.Email, *r.Password)
+type AuthenticateRequest struct {
+	Email    *string `json:"email"`
+	Password *string `json:"password"`
+}
+
+func (r *AuthenticateRequest) MarshallAndValidate(context *gin.Context) {
+	marshallRequestBody(context, r)
+	notValidFields := utils.NewStringSlice()
+	validateStringField("email", r.Email, &notValidFields)
+	validateStringField("password", r.Password, &notValidFields)
+	validateNotValidFieldsSlice(notValidFields)
 }

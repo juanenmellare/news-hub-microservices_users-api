@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"net/http/httptest"
+	"news-hub-microservices_users-api/configs"
 	"news-hub-microservices_users-api/errors"
 	"testing"
 
@@ -15,7 +16,8 @@ import (
 )
 
 func Test_New(t *testing.T) {
-	DomainLayersFactory := factories.NewControllersFactory(nil)
+	config := configs.NewConfig()
+	DomainLayersFactory := factories.NewControllersFactory(nil, config)
 	engine := New(DomainLayersFactory)
 	s := httptest.NewServer(engine)
 
@@ -39,6 +41,16 @@ func Test_HandlePanicRecoveryMiddleware_apiError_NewAlreadyExistModelError(t *te
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
 	assert.Equal(t, "{\"code\":400,\"status\":\"Bad Request\",\"message\":\"foo already exist\"}", w.Body.String())
+}
+
+func Test_HandlePanicRecoveryMiddleware_apiError_NewInvalidEmailOrPasswordError(t *testing.T) {
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+
+	HandlePanicRecoveryMiddleware(c, errors.NewInvalidEmailOrPasswordError())
+
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+	assert.Equal(t, "{\"code\":400,\"status\":\"Bad Request\",\"message\":\"Invalid Email or Password\"}", w.Body.String())
 }
 
 func Test_HandlePanicRecoveryMiddleware_unexpected_apiError(t *testing.T) {

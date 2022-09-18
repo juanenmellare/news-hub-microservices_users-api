@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 	"net/http"
 	"net/http/httptest"
 	"news-hub-microservices_users-api/api"
@@ -19,7 +18,7 @@ import (
 func Test_NewUsersController(t *testing.T) {
 	var userService services.UsersService
 
-	assert.Implements(t, (*UsersController)(nil), NewUsersController(userService))
+	assert.Implements(t, (*UsersController)(nil), NewUsersController(userService, "", 1))
 }
 
 func Test_usersControllerImpl_Create(t *testing.T) {
@@ -30,18 +29,18 @@ func Test_usersControllerImpl_Create(t *testing.T) {
 		}
 	}()
 
-	var usersServices mocks.UsersService
-	usersServices.On("Create", mock.AnythingOfType("*models.User"))
+	userMock := models.NewUserBuilder().Build()
 
-	service := NewUsersController(&usersServices)
+	var usersServiceMock mocks.UsersService
+	usersServiceMock.On("Create", userMock.FirstName, userMock.LastName, userMock.Email, userMock.Password).
+		Return(userMock.ID)
+
+	controller := NewUsersController(&usersServiceMock, "", 1)
 
 	writer := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(writer)
 	reqBodyBytes := new(bytes.Buffer)
-
-	userMock := models.NewUserBuilder().Build()
-
-	createUserRequest := &api.CreateUserRequest{
+	request := &api.CreateUserRequest{
 		FirstName:      &userMock.FirstName,
 		LastName:       &userMock.LastName,
 		Email:          &userMock.Email,
@@ -49,10 +48,43 @@ func Test_usersControllerImpl_Create(t *testing.T) {
 		PasswordRepeat: &userMock.Password,
 	}
 
-	_ = json.NewEncoder(reqBodyBytes).Encode(createUserRequest)
+	_ = json.NewEncoder(reqBodyBytes).Encode(request)
+
 	context.Request, _ = http.NewRequest(http.MethodPost, "/", reqBodyBytes)
 
-	service.Create(context)
+	controller.Create(context)
 
-	assert.Equal(t, "{\"id\":\"00000000-0000-0000-0000-000000000000\",\"firstName\":\"foo-firstname\",\"lastName\":\"foo-lastname\",\"email\":\"foo-email@email.com\",\"password\":\"password\",\"salt\":\"10\"}", writer.Body.String())
+	assert.Equal(t, fmt.Sprintf("{\"userId\":\"%s\"}", userMock.ID), writer.Body.String())
+}
+
+func Test_usersControllerImpl_Authenticate(t *testing.T) {
+	defer func() {
+		if r := recover(); r != nil {
+			str := fmt.Sprintf("the test should not panic: %v", r)
+			t.Errorf(str)
+		}
+	}()
+
+	userMock := models.NewUserBuilder().Build()
+
+	var usersServiceMock mocks.UsersService
+	usersServiceMock.On("Authenticate", userMock.Email, userMock.Password).Return(&userMock)
+
+	controller := NewUsersController(&usersServiceMock, "", 1)
+
+	writer := httptest.NewRecorder()
+	context, _ := gin.CreateTestContext(writer)
+	reqBodyBytes := new(bytes.Buffer)
+	request := &api.AuthenticateRequest{
+		Email:    &userMock.Email,
+		Password: &userMock.Password,
+	}
+
+	_ = json.NewEncoder(reqBodyBytes).Encode(request)
+
+	context.Request, _ = http.NewRequest(http.MethodPost, "/login", reqBodyBytes)
+
+	controller.Authenticate(context)
+
+	assert.Contains(t, writer.Body.String(), "{\"token\":\"Bearer ")
 }
