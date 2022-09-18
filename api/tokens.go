@@ -67,6 +67,16 @@ func (t UserToken) GetUserId() string {
 	panic(errors.NewBadRequestApiError("token missing claim: userId"))
 }
 
+func (t UserToken) IsExpired() {
+	if expirationUnix, ok := (*t.claims)["expiration"].(float64); ok {
+		if time.Now().Unix() > int64(expirationUnix) {
+			panic(errors.NewBadRequestApiError("token has expired"))
+		}
+	} else {
+		panic(errors.NewBadRequestApiError("token missing claim: expiration"))
+	}
+}
+
 func NewUserToken(userTokenExpirationHours int, user *models.User) UserToken {
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)

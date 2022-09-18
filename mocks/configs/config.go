@@ -107,6 +107,34 @@ func (_m *Config) GetPort() string {
 	return r0
 }
 
+// GetTokenUserExpirationHours provides a mock function with given fields:
+func (_m *Config) GetTokenUserExpirationHours() int {
+	ret := _m.Called()
+
+	var r0 int
+	if rf, ok := ret.Get(0).(func() int); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(int)
+	}
+
+	return r0
+}
+
+// GetTokenUserSecretKey provides a mock function with given fields:
+func (_m *Config) GetTokenUserSecretKey() string {
+	ret := _m.Called()
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func() string); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	return r0
+}
+
 type mockConstructorTestingTNewConfig interface {
 	mock.TestingT
 	Cleanup(func())

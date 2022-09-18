@@ -22,6 +22,11 @@ func (_m *UsersController) Create(context *gin.Context) {
 	_m.Called(context)
 }
 
+// Get provides a mock function with given fields: context
+func (_m *UsersController) Get(context *gin.Context) {
+	_m.Called(context)
+}
+
 type mockConstructorTestingTNewUsersController interface {
 	mock.TestingT
 	Cleanup(func())

@@ -8,6 +8,7 @@ import (
 type UsersRepository interface {
 	Create(user *models.User)
 	FindByEmail(email string) *models.User
+	FindById(id string) *models.User
 }
 
 type usersRepositoryImpl struct {
@@ -24,6 +25,15 @@ func (u usersRepositoryImpl) Create(user *models.User) {
 func (u usersRepositoryImpl) FindByEmail(email string) *models.User {
 	var user models.User
 	result := u.relationalDatabase.Get().First(&user, "email = ?", email)
+	if result.Error != nil {
+		return nil
+	}
+	return &user
+}
+
+func (u usersRepositoryImpl) FindById(id string) *models.User {
+	var user models.User
+	result := u.relationalDatabase.Get().First(&user, "id = ?", id)
 	if result.Error != nil {
 		return nil
 	}

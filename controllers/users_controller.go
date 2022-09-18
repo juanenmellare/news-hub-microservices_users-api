@@ -4,12 +4,14 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"news-hub-microservices_users-api/api"
+	"news-hub-microservices_users-api/errors"
 	"news-hub-microservices_users-api/services"
 )
 
 type UsersController interface {
 	Create(context *gin.Context)
 	Authenticate(context *gin.Context)
+	Get(context *gin.Context)
 }
 
 type usersControllerImpl struct {
@@ -38,6 +40,20 @@ func (u usersControllerImpl) Authenticate(context *gin.Context) {
 	token := api.NewUserToken(8, user)
 
 	response := api.NewAuthenticateResponse(token, "foo")
+
+	context.JSON(http.StatusOK, &response)
+}
+
+func (u usersControllerImpl) Get(context *gin.Context) {
+	userToken := &api.UserToken{}
+	userToken.Verify(u.userTokenSecretKey, context.Request)
+	userToken.IsExpired()
+	user := u.userService.GetById(userToken.GetUserId())
+	if user == nil {
+		panic(errors.NewNotFoundError("user from token not found"))
+	}
+
+	response := api.NewGetResponse(user.FirstName, user.LastName, user.Email)
 
 	context.JSON(http.StatusOK, &response)
 }

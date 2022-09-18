@@ -33,6 +33,7 @@ func New(controllers factories.ControllersFactory) *gin.Engine {
 	usersController := controllers.GetUsersController()
 	router.POST("/", usersController.Create)
 	router.POST("/login", usersController.Authenticate)
+	router.GET("/", usersController.Get)
 
 	return router
 }

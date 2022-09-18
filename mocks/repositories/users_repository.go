@@ -34,6 +34,22 @@ func (_m *UsersRepository) FindByEmail(email string) *models.User {
 	return r0
 }
 
+// FindById provides a mock function with given fields: id
+func (_m *UsersRepository) FindById(id string) *models.User {
+	ret := _m.Called(id)
+
+	var r0 *models.User
+	if rf, ok := ret.Get(0).(func(string) *models.User); ok {
+		r0 = rf(id)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*models.User)
+		}
+	}
+
+	return r0
+}
+
 type mockConstructorTestingTNewUsersRepository interface {
 	mock.TestingT
 	Cleanup(func())

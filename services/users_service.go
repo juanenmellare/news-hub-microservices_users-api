@@ -12,6 +12,7 @@ import (
 type UsersService interface {
 	Create(firstName, lastName, email, password string) uuid.UUID
 	Authenticate(email, password string) *models.User
+	GetById(id string) *models.User
 }
 
 type usersServiceImpl struct {
@@ -43,6 +44,10 @@ func (u usersServiceImpl) Authenticate(email, password string) *models.User {
 	}
 
 	return userFounded
+}
+
+func (u usersServiceImpl) GetById(id string) *models.User {
+	return u.usersRepository.FindById(id)
 }
 
 func NewUsersService(usersRepository repositories.UsersRepository, bCryptCost int) UsersService {

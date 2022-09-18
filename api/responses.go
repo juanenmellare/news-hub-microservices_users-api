@@ -24,3 +24,17 @@ func NewAuthenticateResponse(token UserToken, userTokenSecretKey string) *Authen
 		Token: fmt.Sprintf("Bearer %s", token.ToString(userTokenSecretKey)),
 	}
 }
+
+type GetResponse struct {
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+	Email     string `json:"email"`
+}
+
+func NewGetResponse(firstName, lastName, email string) *GetResponse {
+	return &GetResponse{
+		firstName,
+		lastName,
+		email,
+	}
+}
