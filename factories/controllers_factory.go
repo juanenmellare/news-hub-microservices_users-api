@@ -1,6 +1,7 @@
 package factories
 
 import (
+	"news-hub-microservices_users-api/configs"
 	"news-hub-microservices_users-api/controllers"
 	"news-hub-microservices_users-api/databases"
 	"news-hub-microservices_users-api/repositories"
@@ -11,9 +12,9 @@ func buildHealthChecksController() controllers.HealthChecksController {
 	return controllers.NewHealthChecksController()
 }
 
-func buildUsersController(relationalDatabase databases.RelationalDatabase) controllers.UsersController {
+func buildUsersController(relationalDatabase databases.RelationalDatabase, config configs.Config) controllers.UsersController {
 	usersRepository := repositories.NewUsersRepository(relationalDatabase)
-	userService := services.NewUsersService(usersRepository)
+	userService := services.NewUsersService(usersRepository, config.GetBCryptCost())
 	usersController := controllers.NewUsersController(userService)
 
 	return usersController
@@ -29,10 +30,10 @@ type controllersFactoryImpl struct {
 	usersController        controllers.UsersController
 }
 
-func NewControllersFactory(relationalDatabase databases.RelationalDatabase) ControllersFactory {
+func NewControllersFactory(relationalDatabase databases.RelationalDatabase, config configs.Config) ControllersFactory {
 	return &controllersFactoryImpl{
 		healthChecksController: buildHealthChecksController(),
-		usersController:        buildUsersController(relationalDatabase),
+		usersController:        buildUsersController(relationalDatabase, config),
 	}
 }
 

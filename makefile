@@ -9,3 +9,6 @@ tests:
 
 tests-coverage:
 	sh .dev_environment/scripts/test_code_coverage.sh
+
+update-mocks:
+	mockery --all --keeptree --case=snake

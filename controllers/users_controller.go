@@ -9,6 +9,7 @@ import (
 
 type UsersController interface {
 	Create(context *gin.Context)
+	Authenticate(context *gin.Context)
 }
 
 type usersControllerImpl struct {
@@ -16,14 +17,27 @@ type usersControllerImpl struct {
 }
 
 func (u usersControllerImpl) Create(context *gin.Context) {
-	var createUserRequest api.CreateUserRequest
-	createUserRequest.MarshallAndValidate(context)
+	var request api.CreateUserRequest
+	request.MarshallAndValidate(context)
 
-	user := createUserRequest.ToUserModel()
+	uuid := u.userService.Create(*request.FirstName, *request.LastName, *request.Email, *request.Password)
 
-	u.userService.Create(user)
+	response := api.NewCreateUserResponse(uuid)
 
-	context.JSON(http.StatusCreated, &user)
+	context.JSON(http.StatusCreated, response)
+}
+
+func (u usersControllerImpl) Authenticate(context *gin.Context) {
+	var request api.AuthenticateRequest
+	request.MarshallAndValidate(context)
+
+	user := u.userService.Authenticate(*request.Email, *request.Password)
+
+	token := api.NewUserToken(8, user)
+
+	response := api.NewAuthenticateResponse(token, "hello_world")
+
+	context.JSON(http.StatusOK, &response)
 }
 
 func NewUsersController(userService services.UsersService) UsersController {

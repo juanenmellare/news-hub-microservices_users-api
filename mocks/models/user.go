@@ -2,7 +2,9 @@ package models
 
 import (
 	"github.com/gofrs/uuid"
+	"golang.org/x/crypto/bcrypt"
 	"news-hub-microservices_users-api/models"
+	"news-hub-microservices_users-api/utils"
 )
 
 type UserBuilder struct {
@@ -22,8 +24,7 @@ func NewUserBuilder() *UserBuilder {
 			FirstName: "foo-firstname",
 			LastName:  "foo-lastname",
 			Email:     "foo-email@email.com",
-			Password:  "password",
-			Salt:      "10",
+			Password:  utils.HashPassword("password", bcrypt.MinCost),
 		},
 	}
 }

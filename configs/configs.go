@@ -1,7 +1,10 @@
 package configs
 
 import (
+	"fmt"
+	"golang.org/x/crypto/bcrypt"
 	"os"
+	"strconv"
 )
 
 type Config interface {
@@ -11,29 +14,32 @@ type Config interface {
 	GetDatabasePort() string
 	GetDatabaseUser() string
 	GetDatabasePass() string
+	GetBCryptCost() int
 }
 
-type ConfigImpl struct {
+type configImpl struct {
 	port         string
 	databaseHost string
 	databaseName string
 	databasePort string
 	databaseUser string
 	databasePass string
+	bCryptCost   int
 }
 
 func NewConfig() Config {
-	return &ConfigImpl{
-		port:         getValueOrDefault("PORT", "8081"),
-		databaseHost: getValueOrDefault("DATABASE_HOST", "localhost"),
-		databaseName: getValueOrDefault("DATABASE_NAME", "development.news-hub_users-api"),
-		databasePort: getValueOrDefault("DATABASE_PORT", "5432"),
-		databaseUser: getValueOrDefault("DATABASE_USER", "admin"),
-		databasePass: getValueOrDefault("DATABASE_PASS", "news-hub.2022"),
+	return &configImpl{
+		port:         getStringValueOrDefault("PORT", "8081"),
+		databaseHost: getStringValueOrDefault("DATABASE_HOST", "localhost"),
+		databaseName: getStringValueOrDefault("DATABASE_NAME", "development.news-hub_users-api"),
+		databasePort: getStringValueOrDefault("DATABASE_PORT", "5432"),
+		databaseUser: getStringValueOrDefault("DATABASE_USER", "admin"),
+		databasePass: getStringValueOrDefault("DATABASE_PASS", "news-hub.2022"),
+		bCryptCost:   getIntValueOrDefault("BCRYPT_COST", bcrypt.MinCost),
 	}
 }
 
-func getValueOrDefault(key, defaultValue string) string {
+func getStringValueOrDefault(key, defaultValue string) string {
 	value, exists := os.LookupEnv(key)
 	if !exists {
 		return defaultValue
@@ -42,26 +48,44 @@ func getValueOrDefault(key, defaultValue string) string {
 	return value
 }
 
-func (c ConfigImpl) GetPort() string {
+func getIntValueOrDefault(key string, defaultValue int) int {
+	value, exists := os.LookupEnv(key)
+	if !exists {
+		return defaultValue
+	}
+
+	intValue, err := strconv.Atoi(value)
+	if err != nil {
+		panic(fmt.Sprintf("%s is not a valid int", value))
+	}
+
+	return intValue
+}
+
+func (c configImpl) GetPort() string {
 	return c.port
 }
 
-func (c ConfigImpl) GetDatabaseHost() string {
+func (c configImpl) GetDatabaseHost() string {
 	return c.databaseHost
 }
 
-func (c ConfigImpl) GetDatabaseName() string {
+func (c configImpl) GetDatabaseName() string {
 	return c.databaseName
 }
 
-func (c ConfigImpl) GetDatabasePort() string {
+func (c configImpl) GetDatabasePort() string {
 	return c.databasePort
 }
 
-func (c ConfigImpl) GetDatabaseUser() string {
+func (c configImpl) GetDatabaseUser() string {
 	return c.databaseUser
 }
 
-func (c ConfigImpl) GetDatabasePass() string {
+func (c configImpl) GetDatabasePass() string {
 	return c.databasePass
+}
+
+func (c configImpl) GetBCryptCost() int {
+	return c.bCryptCost
 }

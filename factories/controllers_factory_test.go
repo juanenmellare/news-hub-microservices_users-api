@@ -2,12 +2,14 @@ package factories
 
 import (
 	"github.com/stretchr/testify/assert"
+	"news-hub-microservices_users-api/configs"
 	"news-hub-microservices_users-api/controllers"
 	"testing"
 )
 
 func buildDomainLayersFactory() ControllersFactory {
-	return NewControllersFactory(nil)
+	config := configs.NewConfig()
+	return NewControllersFactory(nil, config)
 }
 
 func TestNewDomainLayersFactory(t *testing.T) {

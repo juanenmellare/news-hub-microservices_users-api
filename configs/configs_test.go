@@ -1,7 +1,9 @@
 package configs
 
 import (
+	"golang.org/x/crypto/bcrypt"
 	"os"
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -107,4 +109,38 @@ func TestConfigImpl_GetDatabasePass_default(t *testing.T) {
 	config := NewConfig()
 
 	assert.Equal(t, "news-hub.2022", config.GetDatabasePass())
+}
+
+func TestConfigImpl_GetBCryptCost(t *testing.T) {
+	expectedValue := bcrypt.DefaultCost
+	_ = os.Setenv("BCRYPT_COST", strconv.Itoa(expectedValue))
+
+	config := NewConfig()
+
+	assert.Equal(t, expectedValue, config.GetBCryptCost())
+}
+
+func TestConfigImpl_GetBCryptCost_Panic_invalid_int(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("did not panic")
+		} else {
+			assert.Equal(t, "10c is not a valid int", r)
+		}
+	}()
+
+	expectedValue := "10c"
+	_ = os.Setenv("BCRYPT_COST", expectedValue)
+
+	config := NewConfig()
+
+	assert.Equal(t, bcrypt.MinCost, config.GetBCryptCost())
+}
+
+func TestConfigImpl_GetBCryptCost_default(t *testing.T) {
+	_ = os.Unsetenv("BCRYPT_COST")
+
+	config := NewConfig()
+
+	assert.Equal(t, bcrypt.MinCost, config.GetBCryptCost())
 }

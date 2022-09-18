@@ -14,6 +14,8 @@ func HandlePanicRecoveryMiddleware(context *gin.Context, i interface{}) {
 		apiError = err
 	case *errors.AlreadyExistModelError:
 		apiError = errors.NewBadRequestApiError(err.Message)
+	case *errors.InvalidEmailOrPasswordError:
+		apiError = errors.NewBadRequestApiError(err.Message)
 	case error:
 		apiError = errors.NewInternalServerApiError(fmt.Sprintf("unexpected error: %v", err))
 	default:
@@ -29,7 +31,8 @@ func New(controllers factories.ControllersFactory) *gin.Engine {
 	router.GET("/ping", controllers.GetHealthChecksController().Ping)
 
 	usersController := controllers.GetUsersController()
-	router.POST("/users", usersController.Create)
+	router.POST("/", usersController.Create)
+	router.POST("/login", usersController.Authenticate)
 
 	return router
 }

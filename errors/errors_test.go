@@ -81,3 +81,9 @@ func TestNewAlreadyExistModelError(t *testing.T) {
 
 	assert.Equal(t, "foo already exist", err.Message)
 }
+
+func TestNewInvalidEmailOrPasswordError(t *testing.T) {
+	err := NewInvalidEmailOrPasswordError()
+
+	assert.Equal(t, "Invalid Email or Password", err.Message)
+}
