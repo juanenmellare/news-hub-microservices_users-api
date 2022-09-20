@@ -3,7 +3,7 @@ package models
 import (
 	"github.com/gofrs/uuid"
 	"github.com/stretchr/testify/assert"
-	"news-hub-microservices_users-api/utils"
+	"news-hub-microservices_users-api/internal/utils"
 	"testing"
 )
 

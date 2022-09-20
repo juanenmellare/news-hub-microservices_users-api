@@ -4,7 +4,7 @@ import (
 	"github.com/gofrs/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"news-hub-microservices_users-api/internal/models"
-	"news-hub-microservices_users-api/utils"
+	"news-hub-microservices_users-api/internal/utils"
 )
 
 type UserBuilder struct {

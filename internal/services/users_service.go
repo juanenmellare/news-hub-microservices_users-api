@@ -6,7 +6,7 @@ import (
 	"news-hub-microservices_users-api/internal/errors"
 	"news-hub-microservices_users-api/internal/models"
 	"news-hub-microservices_users-api/internal/repositories"
-	"news-hub-microservices_users-api/utils"
+	"news-hub-microservices_users-api/internal/utils"
 )
 
 type UsersService interface {
