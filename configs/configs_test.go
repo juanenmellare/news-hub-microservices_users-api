@@ -1,13 +1,15 @@
 package configs
 
 import (
+	"golang.org/x/crypto/bcrypt"
 	"os"
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestConfigImpl_GetPort(t *testing.T) {
+func Test_ConfigImpl_GetPort(t *testing.T) {
 	expectedValue := "0000"
 	_ = os.Setenv("PORT", expectedValue)
 
@@ -16,7 +18,7 @@ func TestConfigImpl_GetPort(t *testing.T) {
 	assert.Equal(t, expectedValue, config.GetPort())
 }
 
-func TestConfigImpl_GetPort_default(t *testing.T) {
+func Test_ConfigImpl_GetPort_default(t *testing.T) {
 	_ = os.Unsetenv("PORT")
 
 	config := NewConfig()
@@ -24,7 +26,7 @@ func TestConfigImpl_GetPort_default(t *testing.T) {
 	assert.Equal(t, "8081", config.GetPort())
 }
 
-func TestConfigImpl_GetDatabasePort(t *testing.T) {
+func Test_ConfigImpl_GetDatabasePort(t *testing.T) {
 	expectedValue := "5431"
 	_ = os.Setenv("DATABASE_PORT", expectedValue)
 
@@ -33,7 +35,7 @@ func TestConfigImpl_GetDatabasePort(t *testing.T) {
 	assert.Equal(t, expectedValue, config.GetDatabasePort())
 }
 
-func TestConfigImpl_GetDatabasePort_default(t *testing.T) {
+func Test_ConfigImpl_GetDatabasePort_default(t *testing.T) {
 	_ = os.Unsetenv("DATABASE_PORT")
 
 	config := NewConfig()
@@ -107,4 +109,54 @@ func TestConfigImpl_GetDatabasePass_default(t *testing.T) {
 	config := NewConfig()
 
 	assert.Equal(t, "news-hub.2022", config.GetDatabasePass())
+}
+
+func TestConfigImpl_GetBCryptCost(t *testing.T) {
+	expectedValue := bcrypt.DefaultCost
+	_ = os.Setenv("BCRYPT_COST", strconv.Itoa(expectedValue))
+
+	config := NewConfig()
+
+	assert.Equal(t, expectedValue, config.GetBCryptCost())
+}
+
+func TestConfigImpl_GetBCryptCost_Panic_invalid_int(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("did not panic")
+		} else {
+			assert.Equal(t, "10c is not a valid int", r)
+		}
+	}()
+
+	expectedValue := "10c"
+	_ = os.Setenv("BCRYPT_COST", expectedValue)
+
+	config := NewConfig()
+
+	assert.Equal(t, bcrypt.MinCost, config.GetBCryptCost())
+}
+
+func TestConfigImpl_GetBCryptCost_default(t *testing.T) {
+	_ = os.Unsetenv("BCRYPT_COST")
+
+	config := NewConfig()
+
+	assert.Equal(t, bcrypt.MinCost, config.GetBCryptCost())
+}
+
+func Test_configImpl_GetTokenUserSecretKey(t *testing.T) {
+	_ = os.Unsetenv("USER_TOKEN_SECRET_KEY")
+
+	config := NewConfig()
+
+	assert.Equal(t, "foo", config.GetTokenUserSecretKey())
+}
+
+func Test_configImpl_GetTokenUserExpirationHours(t *testing.T) {
+	_ = os.Unsetenv("USER_TOKEN_EXPIRATION_HOURS")
+
+	config := NewConfig()
+
+	assert.Equal(t, 1, config.GetTokenUserExpirationHours())
 }
