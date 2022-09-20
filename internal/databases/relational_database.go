@@ -29,7 +29,7 @@ func (r relationDatabaseImpl) Get() *gorm.DB {
 }
 
 func (r relationDatabaseImpl) DoMigration() {
-	// For UUIDs run in DB -> CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+	r.database.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"")
 	migrator := r.Get().Migrator()
 
 	modelsToAutoMigrate := []interface{}{
