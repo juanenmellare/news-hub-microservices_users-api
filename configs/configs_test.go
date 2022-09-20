@@ -144,3 +144,19 @@ func TestConfigImpl_GetBCryptCost_default(t *testing.T) {
 
 	assert.Equal(t, bcrypt.MinCost, config.GetBCryptCost())
 }
+
+func Test_configImpl_GetTokenUserSecretKey(t *testing.T) {
+	_ = os.Unsetenv("USER_TOKEN_SECRET_KEY")
+
+	config := NewConfig()
+
+	assert.Equal(t, "foo", config.GetTokenUserSecretKey())
+}
+
+func Test_configImpl_GetTokenUserExpirationHours(t *testing.T) {
+	_ = os.Unsetenv("USER_TOKEN_EXPIRATION_HOURS")
+
+	config := NewConfig()
+
+	assert.Equal(t, 1, config.GetTokenUserExpirationHours())
+}
