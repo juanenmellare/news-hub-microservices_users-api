@@ -2,7 +2,7 @@ package models
 
 import (
 	"github.com/gofrs/uuid"
-	"news-hub-microservices_users-api/utils"
+	"news-hub-microservices_users-api/internal/utils"
 )
 
 type User struct {

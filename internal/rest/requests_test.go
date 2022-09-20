@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"news-hub-microservices_users-api/internal/errors"
-	"news-hub-microservices_users-api/utils"
+	"news-hub-microservices_users-api/internal/utils"
 	"strings"
 	"testing"
 )

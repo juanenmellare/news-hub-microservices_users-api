@@ -3,7 +3,7 @@ package rest
 import (
 	"github.com/gin-gonic/gin"
 	"news-hub-microservices_users-api/internal/errors"
-	"news-hub-microservices_users-api/utils"
+	"news-hub-microservices_users-api/internal/utils"
 )
 
 func validateStringField(fieldName string, field *string, notValidFields *[]string) {
