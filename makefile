@@ -1,14 +1,14 @@
 run:
-	sh .dev_environment/scripts/run.sh
+	sh scripts/run.sh
 
 format:
-	sh .dev_environment/scripts/format_code.sh
+	sh scripts/format.sh
 
 tests:
-	sh .dev_environment/scripts/test_code.sh
+	sh scripts/tests.sh
 
 tests-coverage:
-	sh .dev_environment/scripts/test_code_coverage.sh
+	sh scripts/tests_coverage.sh
 
-update-mocks:
-	mockery --all --keeptree --case=snake
+generate-mocks:
+	sh scripts/generate_mocks.sh
