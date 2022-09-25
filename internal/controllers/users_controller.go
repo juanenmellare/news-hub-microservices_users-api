@@ -14,13 +14,13 @@ type UsersController interface {
 	Get(context *gin.Context)
 }
 
-type usersControllerImpl struct {
+type usersController struct {
 	userService              services.UsersService
 	userTokenSecretKey       string
 	userTokenExpirationHours int
 }
 
-func (u usersControllerImpl) Create(context *gin.Context) {
+func (u usersController) Create(context *gin.Context) {
 	var request rest.CreateUserRequest
 	request.MarshallAndValidate(context)
 
@@ -31,7 +31,7 @@ func (u usersControllerImpl) Create(context *gin.Context) {
 	context.JSON(http.StatusCreated, response)
 }
 
-func (u usersControllerImpl) Authenticate(context *gin.Context) {
+func (u usersController) Authenticate(context *gin.Context) {
 	var request rest.AuthenticateRequest
 	request.MarshallAndValidate(context)
 
@@ -44,7 +44,7 @@ func (u usersControllerImpl) Authenticate(context *gin.Context) {
 	context.JSON(http.StatusOK, &response)
 }
 
-func (u usersControllerImpl) Get(context *gin.Context) {
+func (u usersController) Get(context *gin.Context) {
 	userToken := &rest.UserToken{}
 	userToken.Verify(u.userTokenSecretKey, context.Request)
 	userToken.IsExpired()
@@ -60,7 +60,7 @@ func (u usersControllerImpl) Get(context *gin.Context) {
 }
 
 func NewUsersController(userService services.UsersService, userTokenSecretKey string, userTokenExpirationHours int) UsersController {
-	return &usersControllerImpl{
+	return &usersController{
 		userService,
 		userTokenSecretKey,
 		userTokenExpirationHours,

@@ -19,7 +19,7 @@ type Config interface {
 	GetTokenUserExpirationHours() int
 }
 
-type configImpl struct {
+type config struct {
 	port                     string
 	databaseHost             string
 	databaseName             string
@@ -32,7 +32,7 @@ type configImpl struct {
 }
 
 func NewConfig() Config {
-	return &configImpl{
+	return &config{
 		port:                     getStringValueOrDefault("PORT", "8081"),
 		databaseHost:             getStringValueOrDefault("DATABASE_HOST", "localhost"),
 		databaseName:             getStringValueOrDefault("DATABASE_NAME", "development.news-hub_users-api"),
@@ -68,38 +68,38 @@ func getIntValueOrDefault(key string, defaultValue int) int {
 	return intValue
 }
 
-func (c configImpl) GetPort() string {
+func (c config) GetPort() string {
 	return c.port
 }
 
-func (c configImpl) GetDatabaseHost() string {
+func (c config) GetDatabaseHost() string {
 	return c.databaseHost
 }
 
-func (c configImpl) GetDatabaseName() string {
+func (c config) GetDatabaseName() string {
 	return c.databaseName
 }
 
-func (c configImpl) GetDatabasePort() string {
+func (c config) GetDatabasePort() string {
 	return c.databasePort
 }
 
-func (c configImpl) GetDatabaseUser() string {
+func (c config) GetDatabaseUser() string {
 	return c.databaseUser
 }
 
-func (c configImpl) GetDatabasePass() string {
+func (c config) GetDatabasePass() string {
 	return c.databasePass
 }
 
-func (c configImpl) GetBCryptCost() int {
+func (c config) GetBCryptCost() int {
 	return c.bCryptCost
 }
 
-func (c configImpl) GetTokenUserSecretKey() string {
+func (c config) GetTokenUserSecretKey() string {
 	return c.userTokenSecretKey
 }
 
-func (c configImpl) GetTokenUserExpirationHours() int {
+func (c config) GetTokenUserExpirationHours() int {
 	return c.userTokenExpirationHours
 }

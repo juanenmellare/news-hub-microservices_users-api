@@ -12,7 +12,7 @@ func TestNewHealthChecksController(t *testing.T) {
 	assert.Implements(t, (*HealthChecksController)(nil), NewHealthChecksController())
 }
 
-func Test_healthChecksControllerImpl_Ping(t *testing.T) {
+func Test_healthChecksController_Ping(t *testing.T) {
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
 

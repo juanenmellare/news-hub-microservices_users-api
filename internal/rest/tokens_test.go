@@ -21,24 +21,24 @@ func assertTokenPanic(t *testing.T, recover interface{}, message string) {
 func TestNewUserToken(t *testing.T) {
 	userMock := models.NewUserBuilder().Build()
 
-	token := NewUserToken(1, &userMock)
+	userToken := NewUserToken(1, &userMock)
 
-	assert.NotNil(t, token.token)
-	assert.NotNil(t, token.claims)
+	assert.NotNil(t, userToken.jwtToken)
+	assert.NotNil(t, userToken.claims)
 }
 
 func TestUserToken_Verify_GetUserId(t *testing.T) {
 	userMock := models.NewUserBuilder().Build()
 
-	token := NewUserToken(1, &userMock)
+	userToken := NewUserToken(1, &userMock)
 	secretKey := ""
-	tokenString := token.ToString(secretKey)
+	tokenString := userToken.ToString(secretKey)
 
 	request, _ := http.NewRequest(http.MethodPost, "/", nil)
 	request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", tokenString))
-	token.Verify(secretKey, request)
+	userToken.Verify(secretKey, request)
 
-	assert.Equal(t, userMock.ID.String(), token.GetUserId())
+	assert.Equal(t, userMock.ID.String(), userToken.GetUserId())
 }
 
 func TestUserToken_Verify_GetUserId_error_verifyUnexpectedError(t *testing.T) {
@@ -46,13 +46,13 @@ func TestUserToken_Verify_GetUserId_error_verifyUnexpectedError(t *testing.T) {
 
 	userMock := models.NewUserBuilder().Build()
 
-	token := NewUserToken(1, &userMock)
+	userToken := NewUserToken(1, &userMock)
 	secretKey := ""
-	tokenString := token.ToString(secretKey)
+	tokenString := userToken.ToString(secretKey)
 
 	request, _ := http.NewRequest(http.MethodPost, "/", nil)
 	request.Header.Add("Authorization", fmt.Sprintf("%s foo", tokenString))
-	token.Verify(secretKey, request)
+	userToken.Verify(secretKey, request)
 }
 
 func TestUserToken_Verify_GetUserId_error_ToString(t *testing.T) {
@@ -60,31 +60,31 @@ func TestUserToken_Verify_GetUserId_error_ToString(t *testing.T) {
 
 	userMock := models.NewUserBuilder().Build()
 
-	token := NewUserToken(1, &userMock)
-	token.token.Method = &jwt.SigningMethodHMAC{}
+	userToken := NewUserToken(1, &userMock)
+	userToken.jwtToken.Method = &jwt.SigningMethodHMAC{}
 
 	secretKey := ""
-	token.ToString(secretKey)
+	userToken.ToString(secretKey)
 }
 
 func TestUserToken_Verify_GetUserId_error(t *testing.T) {
 	defer func() { assertTokenPanic(t, recover(), "token missing claim: userId") }()
 
-	userToken := jwt.New(jwt.SigningMethodHS256)
-	claims := userToken.Claims.(jwt.MapClaims)
+	jwtToken := jwt.New(jwt.SigningMethodHS256)
+	claims := jwtToken.Claims.(jwt.MapClaims)
 
-	token := UserToken{
-		tokenImpl{userToken, &claims},
+	userToken := UserToken{
+		token{jwtToken, &claims},
 	}
 
 	secretKey := ""
-	tokenString := token.ToString(secretKey)
+	tokenString := userToken.ToString(secretKey)
 
 	request, _ := http.NewRequest(http.MethodPost, "/", nil)
 	request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", tokenString))
-	token.Verify(secretKey, request)
+	userToken.Verify(secretKey, request)
 
-	token.GetUserId()
+	userToken.GetUserId()
 }
 
 func TestUserToken_Verify_GetUserId_error_getTokenFromRequest(t *testing.T) {
@@ -92,13 +92,13 @@ func TestUserToken_Verify_GetUserId_error_getTokenFromRequest(t *testing.T) {
 
 	userMock := models.NewUserBuilder().Build()
 
-	token := NewUserToken(1, &userMock)
+	userToken := NewUserToken(1, &userMock)
 	secretKey := ""
-	tokenString := token.ToString(secretKey)
+	tokenString := userToken.ToString(secretKey)
 
 	request, _ := http.NewRequest(http.MethodPost, "/", nil)
 	request.Header.Add("Authorization", tokenString)
-	token.Verify(secretKey, request)
+	userToken.Verify(secretKey, request)
 }
 
 func TestUserToken_IsExpired_false(t *testing.T) {
@@ -110,17 +110,17 @@ func TestUserToken_IsExpired_false(t *testing.T) {
 	}()
 
 	userMock := models.NewUserBuilder().Build()
-	token := NewUserToken(1, &userMock)
+	userToken := NewUserToken(1, &userMock)
 
-	token.IsExpired()
+	userToken.IsExpired()
 }
 
 func TestUserToken_IsExpired_missing_claim(t *testing.T) {
 	defer func() { assertTokenPanic(t, recover(), "token missing claim: expiration") }()
 
-	token := jwt.New(jwt.SigningMethodHS256)
-	claims := token.Claims.(jwt.MapClaims)
-	userToken := UserToken{tokenImpl{token, &claims}}
+	jwtToken := jwt.New(jwt.SigningMethodHS256)
+	claims := jwtToken.Claims.(jwt.MapClaims)
+	userToken := UserToken{token{jwtToken, &claims}}
 
 	userToken.IsExpired()
 }
@@ -129,7 +129,7 @@ func TestUserToken_IsExpired_true_panic(t *testing.T) {
 	defer func() { assertTokenPanic(t, recover(), "token has expired") }()
 
 	userMock := models.NewUserBuilder().Build()
-	token := NewUserToken(-1, &userMock)
+	userToken := NewUserToken(-1, &userMock)
 
-	token.IsExpired()
+	userToken.IsExpired()
 }
