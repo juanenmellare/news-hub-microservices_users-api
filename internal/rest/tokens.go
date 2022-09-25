@@ -15,9 +15,9 @@ type Token interface {
 	ToString(userTokenSecretKey string) string
 }
 
-type tokenImpl struct {
-	token  *jwt.Token
-	claims *jwt.MapClaims
+type token struct {
+	jwtToken *jwt.Token
+	claims   *jwt.MapClaims
 }
 
 func getTokenFromRequest(r *http.Request) string {
@@ -29,26 +29,26 @@ func getTokenFromRequest(r *http.Request) string {
 	return bearTokenParts[1]
 }
 
-func (t *tokenImpl) Verify(userTokenSecretKey string, r *http.Request) {
+func (t *token) Verify(userTokenSecretKey string, r *http.Request) {
 	tokenString := getTokenFromRequest(r)
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+	jwtToken, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return []byte(userTokenSecretKey), nil
 	})
 	if err != nil {
 		panic(errors.NewBadRequestApiError(err.Error()))
 	}
 
-	t.token = token
+	t.jwtToken = jwtToken
 
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if ok && token.Valid {
+	claims, ok := jwtToken.Claims.(jwt.MapClaims)
+	if ok && jwtToken.Valid {
 		t.claims = &claims
 	}
 }
 
-func (t *tokenImpl) ToString(userTokenSecretKey string) string {
+func (t *token) ToString(userTokenSecretKey string) string {
 	secretKey := []byte(userTokenSecretKey)
-	tokenString, err := t.token.SignedString(secretKey)
+	tokenString, err := t.jwtToken.SignedString(secretKey)
 	if err != nil {
 		panic(errors.NewBadRequestApiError(err.Error()))
 	}
@@ -57,7 +57,7 @@ func (t *tokenImpl) ToString(userTokenSecretKey string) string {
 }
 
 type UserToken struct {
-	tokenImpl
+	token
 }
 
 func (t UserToken) GetUserId() string {
@@ -78,12 +78,12 @@ func (t UserToken) IsExpired() {
 }
 
 func NewUserToken(userTokenExpirationHours int, user *models.User) *UserToken {
-	token := jwt.New(jwt.SigningMethodHS256)
-	claims := token.Claims.(jwt.MapClaims)
+	jwtToken := jwt.New(jwt.SigningMethodHS256)
+	claims := jwtToken.Claims.(jwt.MapClaims)
 	claims["userId"] = user.ID
 	claims["expiration"] = float64(time.Now().Add(time.Duration(userTokenExpirationHours) * time.Hour).Unix())
 
 	return &UserToken{
-		tokenImpl{token, &claims},
+		token{jwtToken, &claims},
 	}
 }

@@ -25,22 +25,22 @@ type ControllersFactory interface {
 	GetUsersController() controllers.UsersController
 }
 
-type controllersFactoryImpl struct {
+type controllersFactory struct {
 	healthChecksController controllers.HealthChecksController
 	usersController        controllers.UsersController
 }
 
 func NewControllersFactory(relationalDatabase databases.RelationalDatabase, config configs.Config) ControllersFactory {
-	return &controllersFactoryImpl{
+	return &controllersFactory{
 		healthChecksController: buildHealthChecksController(),
 		usersController:        buildUsersController(relationalDatabase, config),
 	}
 }
 
-func (c controllersFactoryImpl) GetHealthChecksController() controllers.HealthChecksController {
+func (c controllersFactory) GetHealthChecksController() controllers.HealthChecksController {
 	return c.healthChecksController
 }
 
-func (c controllersFactoryImpl) GetUsersController() controllers.UsersController {
+func (c controllersFactory) GetUsersController() controllers.UsersController {
 	return c.usersController
 }

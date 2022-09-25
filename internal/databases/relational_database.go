@@ -10,7 +10,7 @@ type RelationalDatabase interface {
 	DoMigration()
 }
 
-type relationDatabaseImpl struct {
+type relationDatabase struct {
 	database *gorm.DB
 }
 
@@ -19,16 +19,16 @@ func NewConnection(database *gorm.DB, err error) RelationalDatabase {
 		panic("[ERROR] there was an error while trying to connect database: " + err.Error())
 	}
 
-	return &relationDatabaseImpl{
+	return &relationDatabase{
 		database: database,
 	}
 }
 
-func (r relationDatabaseImpl) Get() *gorm.DB {
+func (r relationDatabase) Get() *gorm.DB {
 	return r.database
 }
 
-func (r relationDatabaseImpl) DoMigration() {
+func (r relationDatabase) DoMigration() {
 	r.database.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"")
 	migrator := r.Get().Migrator()
 

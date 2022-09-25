@@ -15,12 +15,12 @@ type UsersService interface {
 	GetById(id string) *models.User
 }
 
-type usersServiceImpl struct {
+type usersService struct {
 	usersRepository repositories.UsersRepository
 	bCryptCost      int
 }
 
-func (u usersServiceImpl) Create(firstName, lastName, email, password string) uuid.UUID {
+func (u usersService) Create(firstName, lastName, email, password string) uuid.UUID {
 	userFounded := u.usersRepository.FindByEmail(email)
 	if userFounded != nil {
 		panic(errors.NewAlreadyExistModelError(fmt.Sprintf("user with '%s' email", email)))
@@ -32,7 +32,7 @@ func (u usersServiceImpl) Create(firstName, lastName, email, password string) uu
 	return user.ID
 }
 
-func (u usersServiceImpl) Authenticate(email, password string) *models.User {
+func (u usersService) Authenticate(email, password string) *models.User {
 	userFounded := u.usersRepository.FindByEmail(email)
 	if userFounded == nil {
 		panic(errors.NewInvalidEmailOrPasswordError())
@@ -46,12 +46,12 @@ func (u usersServiceImpl) Authenticate(email, password string) *models.User {
 	return userFounded
 }
 
-func (u usersServiceImpl) GetById(id string) *models.User {
+func (u usersService) GetById(id string) *models.User {
 	return u.usersRepository.FindById(id)
 }
 
 func NewUsersService(usersRepository repositories.UsersRepository, bCryptCost int) UsersService {
-	return &usersServiceImpl{
+	return &usersService{
 		usersRepository,
 		bCryptCost,
 	}

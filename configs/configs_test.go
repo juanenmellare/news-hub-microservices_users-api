@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_ConfigImpl_GetPort(t *testing.T) {
+func Test_Config_GetPort(t *testing.T) {
 	expectedValue := "0000"
 	_ = os.Setenv("PORT", expectedValue)
 
@@ -18,7 +18,7 @@ func Test_ConfigImpl_GetPort(t *testing.T) {
 	assert.Equal(t, expectedValue, config.GetPort())
 }
 
-func Test_ConfigImpl_GetPort_default(t *testing.T) {
+func Test_Config_GetPort_default(t *testing.T) {
 	_ = os.Unsetenv("PORT")
 
 	config := NewConfig()
@@ -26,7 +26,7 @@ func Test_ConfigImpl_GetPort_default(t *testing.T) {
 	assert.Equal(t, "8081", config.GetPort())
 }
 
-func Test_ConfigImpl_GetDatabasePort(t *testing.T) {
+func Test_Config_GetDatabasePort(t *testing.T) {
 	expectedValue := "5431"
 	_ = os.Setenv("DATABASE_PORT", expectedValue)
 
@@ -35,7 +35,7 @@ func Test_ConfigImpl_GetDatabasePort(t *testing.T) {
 	assert.Equal(t, expectedValue, config.GetDatabasePort())
 }
 
-func Test_ConfigImpl_GetDatabasePort_default(t *testing.T) {
+func Test_Config_GetDatabasePort_default(t *testing.T) {
 	_ = os.Unsetenv("DATABASE_PORT")
 
 	config := NewConfig()
@@ -43,7 +43,7 @@ func Test_ConfigImpl_GetDatabasePort_default(t *testing.T) {
 	assert.Equal(t, "5432", config.GetDatabasePort())
 }
 
-func TestConfigImpl_GetDatabaseHost(t *testing.T) {
+func TestConfig_GetDatabaseHost(t *testing.T) {
 	expectedValue := "foo-host"
 	_ = os.Setenv("DATABASE_HOST", expectedValue)
 
@@ -52,7 +52,7 @@ func TestConfigImpl_GetDatabaseHost(t *testing.T) {
 	assert.Equal(t, expectedValue, config.GetDatabaseHost())
 }
 
-func TestConfigImpl_GetDatabaseHost_default(t *testing.T) {
+func TestConfig_GetDatabaseHost_default(t *testing.T) {
 	_ = os.Unsetenv("DATABASE_HOST")
 
 	config := NewConfig()
@@ -60,7 +60,7 @@ func TestConfigImpl_GetDatabaseHost_default(t *testing.T) {
 	assert.Equal(t, "localhost", config.GetDatabaseHost())
 }
 
-func TestConfigImpl_GetDatabaseName(t *testing.T) {
+func TestConfig_GetDatabaseName(t *testing.T) {
 	expectedValue := "foo-name"
 	_ = os.Setenv("DATABASE_NAME", expectedValue)
 
@@ -69,7 +69,7 @@ func TestConfigImpl_GetDatabaseName(t *testing.T) {
 	assert.Equal(t, expectedValue, config.GetDatabaseName())
 }
 
-func TestConfigImpl_GetDatabaseName_default(t *testing.T) {
+func TestConfig_GetDatabaseName_default(t *testing.T) {
 	_ = os.Unsetenv("DATABASE_NAME")
 
 	config := NewConfig()
@@ -77,7 +77,7 @@ func TestConfigImpl_GetDatabaseName_default(t *testing.T) {
 	assert.Equal(t, "development.news-hub_users-api", config.GetDatabaseName())
 }
 
-func TestConfigImpl_GetDatabaseUser(t *testing.T) {
+func TestConfig_GetDatabaseUser(t *testing.T) {
 	expectedValue := "foo-user"
 	_ = os.Setenv("DATABASE_USER", expectedValue)
 
@@ -86,7 +86,7 @@ func TestConfigImpl_GetDatabaseUser(t *testing.T) {
 	assert.Equal(t, expectedValue, config.GetDatabaseUser())
 }
 
-func TestConfigImpl_GetDatabaseUser_default(t *testing.T) {
+func TestConfig_GetDatabaseUser_default(t *testing.T) {
 	_ = os.Unsetenv("DATABASE_USER")
 
 	config := NewConfig()
@@ -94,7 +94,7 @@ func TestConfigImpl_GetDatabaseUser_default(t *testing.T) {
 	assert.Equal(t, "admin", config.GetDatabaseUser())
 }
 
-func TestConfigImpl_GetDatabasePass(t *testing.T) {
+func TestConfig_GetDatabasePass(t *testing.T) {
 	expectedValue := "foo-pass"
 	_ = os.Setenv("DATABASE_PASS", expectedValue)
 
@@ -103,7 +103,7 @@ func TestConfigImpl_GetDatabasePass(t *testing.T) {
 	assert.Equal(t, expectedValue, config.GetDatabasePass())
 }
 
-func TestConfigImpl_GetDatabasePass_default(t *testing.T) {
+func TestConfig_GetDatabasePass_default(t *testing.T) {
 	_ = os.Unsetenv("DATABASE_PASS")
 
 	config := NewConfig()
@@ -111,7 +111,7 @@ func TestConfigImpl_GetDatabasePass_default(t *testing.T) {
 	assert.Equal(t, "news-hub.2022", config.GetDatabasePass())
 }
 
-func TestConfigImpl_GetBCryptCost(t *testing.T) {
+func TestConfig_GetBCryptCost(t *testing.T) {
 	expectedValue := bcrypt.DefaultCost
 	_ = os.Setenv("BCRYPT_COST", strconv.Itoa(expectedValue))
 
@@ -120,7 +120,7 @@ func TestConfigImpl_GetBCryptCost(t *testing.T) {
 	assert.Equal(t, expectedValue, config.GetBCryptCost())
 }
 
-func TestConfigImpl_GetBCryptCost_Panic_invalid_int(t *testing.T) {
+func TestConfig_GetBCryptCost_Panic_invalid_int(t *testing.T) {
 	defer func() {
 		if r := recover(); r == nil {
 			t.Errorf("did not panic")
@@ -137,7 +137,7 @@ func TestConfigImpl_GetBCryptCost_Panic_invalid_int(t *testing.T) {
 	assert.Equal(t, bcrypt.MinCost, config.GetBCryptCost())
 }
 
-func TestConfigImpl_GetBCryptCost_default(t *testing.T) {
+func TestConfig_GetBCryptCost_default(t *testing.T) {
 	_ = os.Unsetenv("BCRYPT_COST")
 
 	config := NewConfig()
@@ -145,7 +145,7 @@ func TestConfigImpl_GetBCryptCost_default(t *testing.T) {
 	assert.Equal(t, bcrypt.MinCost, config.GetBCryptCost())
 }
 
-func Test_configImpl_GetTokenUserSecretKey(t *testing.T) {
+func Test_config_GetTokenUserSecretKey(t *testing.T) {
 	_ = os.Unsetenv("USER_TOKEN_SECRET_KEY")
 
 	config := NewConfig()
@@ -153,7 +153,7 @@ func Test_configImpl_GetTokenUserSecretKey(t *testing.T) {
 	assert.Equal(t, "foo", config.GetTokenUserSecretKey())
 }
 
-func Test_configImpl_GetTokenUserExpirationHours(t *testing.T) {
+func Test_config_GetTokenUserExpirationHours(t *testing.T) {
 	_ = os.Unsetenv("USER_TOKEN_EXPIRATION_HOURS")
 
 	config := NewConfig()
