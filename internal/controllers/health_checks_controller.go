@@ -9,13 +9,13 @@ type HealthChecksController interface {
 	Ping(context *gin.Context)
 }
 
-type healthChecksControllerImpl struct{}
+type healthChecksController struct{}
 
 func NewHealthChecksController() HealthChecksController {
-	return &healthChecksControllerImpl{}
+	return &healthChecksController{}
 }
 
-func (h healthChecksControllerImpl) Ping(context *gin.Context) {
+func (h healthChecksController) Ping(context *gin.Context) {
 	context.JSON(http.StatusOK, gin.H{
 		"message": "pong",
 	})

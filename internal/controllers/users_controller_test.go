@@ -22,7 +22,7 @@ func Test_NewUsersController(t *testing.T) {
 	assert.Implements(t, (*UsersController)(nil), NewUsersController(userService, "", 1))
 }
 
-func Test_usersControllerImpl_Create(t *testing.T) {
+func Test_usersController_Create(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
 			str := fmt.Sprintf("the test should not panic: %v", r)
@@ -58,7 +58,7 @@ func Test_usersControllerImpl_Create(t *testing.T) {
 	assert.Equal(t, fmt.Sprintf("{\"userId\":\"%s\"}", userMock.ID), writer.Body.String())
 }
 
-func Test_usersControllerImpl_Authenticate(t *testing.T) {
+func Test_usersController_Authenticate(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
 			str := fmt.Sprintf("the test should not panic: %v", r)
@@ -90,7 +90,7 @@ func Test_usersControllerImpl_Authenticate(t *testing.T) {
 	assert.Contains(t, writer.Body.String(), "{\"token\":\"Bearer ")
 }
 
-func Test_usersControllerImpl_Get(t *testing.T) {
+func Test_usersController_Get(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
 			str := fmt.Sprintf("the test should not panic: %v", r)
@@ -120,7 +120,7 @@ func Test_usersControllerImpl_Get(t *testing.T) {
 	assert.Equal(t, "{\"firstName\":\"foo-firstname\",\"lastName\":\"foo-lastname\",\"email\":\"foo-email@email.com\"}", writer.Body.String())
 }
 
-func Test_usersControllerImpl_Get_not_found_user_from_token(t *testing.T) {
+func Test_usersController_Get_not_found_user_from_token(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
 			assert.Equal(t, &errors.ApiError{Code: 404, Status: "Not Found", Message: "user from token not found"}, r)

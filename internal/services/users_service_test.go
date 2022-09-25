@@ -28,7 +28,7 @@ func assertShouldNotPanic(t *testing.T) {
 	}()
 }
 
-func Test_usersServiceImpl_Create(t *testing.T) {
+func Test_usersService_Create(t *testing.T) {
 	assertShouldNotPanic(t)
 
 	userMock := mocksBuilders.NewUserBuilder().Build()
@@ -47,7 +47,7 @@ func Test_usersServiceImpl_Create(t *testing.T) {
 	assert.Equal(t, userMock.ID, userId)
 }
 
-func Test_usersServiceImpl_Create_NewAlreadyExistModelError(t *testing.T) {
+func Test_usersService_Create_NewAlreadyExistModelError(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
 			assert.Equal(t, &errors.AlreadyExistModelError{Message: "user with 'foo-email@email.com' email already exist"}, r)
@@ -66,7 +66,7 @@ func Test_usersServiceImpl_Create_NewAlreadyExistModelError(t *testing.T) {
 	service.Create(userMock.FirstName, userMock.LastName, userMock.Email, userMock.Password)
 }
 
-func Test_usersServiceImpl_Authenticate(t *testing.T) {
+func Test_usersService_Authenticate(t *testing.T) {
 	assertShouldNotPanic(t)
 
 	userMock := mocksBuilders.NewUserBuilder().Build()
@@ -81,7 +81,7 @@ func Test_usersServiceImpl_Authenticate(t *testing.T) {
 	assert.Equal(t, userMock.ID, user.ID)
 }
 
-func Test_usersServiceImpl_Authenticate_NewInvalidEmailOrPasswordError_FindByEmail(t *testing.T) {
+func Test_usersService_Authenticate_NewInvalidEmailOrPasswordError_FindByEmail(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
 			assert.Equal(t, &errors.InvalidEmailOrPasswordError{Message: "Invalid Email or Password"}, r)
@@ -100,7 +100,7 @@ func Test_usersServiceImpl_Authenticate_NewInvalidEmailOrPasswordError_FindByEma
 	_ = service.Authenticate(userMock.Email, "")
 }
 
-func Test_usersServiceImpl_Authenticate_NewInvalidEmailOrPasswordError_VerifyPassword(t *testing.T) {
+func Test_usersService_Authenticate_NewInvalidEmailOrPasswordError_VerifyPassword(t *testing.T) {
 	defer func() {
 		if r := recover(); r != nil {
 			assert.Equal(t, &errors.InvalidEmailOrPasswordError{Message: "Invalid Email or Password"}, r)
@@ -119,7 +119,7 @@ func Test_usersServiceImpl_Authenticate_NewInvalidEmailOrPasswordError_VerifyPas
 	_ = service.Authenticate(userMock.Email, "")
 }
 
-func Test_usersServiceImpl_GetById(t *testing.T) {
+func Test_usersService_GetById(t *testing.T) {
 	userMock := mocksBuilders.NewUserBuilder().Build()
 
 	var userRepository mocks.UsersRepository

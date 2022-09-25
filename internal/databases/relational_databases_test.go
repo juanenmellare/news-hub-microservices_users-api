@@ -42,7 +42,7 @@ func Test_handleMigrationErr(t *testing.T) {
 	handleMigrationErr(err)
 }
 
-func Test_relationDatabaseImpl_DoMigration(t *testing.T) {
+func Test_relationDatabase_DoMigration(t *testing.T) {
 	defer func() {
 		err := recover()
 		if err != nil {
