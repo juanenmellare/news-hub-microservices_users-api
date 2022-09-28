@@ -160,3 +160,35 @@ func Test_config_GetTokenUserExpirationHours(t *testing.T) {
 
 	assert.Equal(t, 1, config.GetTokenUserExpirationHours())
 }
+
+func Test_config_GetBasicAuthUsername(t *testing.T) {
+	_ = os.Setenv("BASIC_AUTH_USERNAME", "root")
+
+	config := NewConfig()
+
+	assert.Equal(t, "root", config.GetBasicAuthUsername())
+}
+
+func Test_config_GetBasicAuthUsername_default(t *testing.T) {
+	_ = os.Unsetenv("BASIC_AUTH_USERNAME")
+
+	config := NewConfig()
+
+	assert.Equal(t, "admin", config.GetBasicAuthUsername())
+}
+
+func Test_config_GetBasicAuthPassword(t *testing.T) {
+	_ = os.Setenv("BASIC_AUTH_PASSWORD", "foo")
+
+	config := NewConfig()
+
+	assert.Equal(t, "foo", config.GetBasicAuthPassword())
+}
+
+func Test_config_GetBasicAuthPassword_default(t *testing.T) {
+	_ = os.Unsetenv("BASIC_AUTH_PASSWORD")
+
+	config := NewConfig()
+
+	assert.Equal(t, "password", config.GetBasicAuthPassword())
+}

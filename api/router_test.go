@@ -18,7 +18,7 @@ import (
 func Test_New(t *testing.T) {
 	config := configs.NewConfig()
 	DomainLayersFactory := factories.NewControllersFactory(nil, config)
-	engine := NewRouter(DomainLayersFactory)
+	engine := NewRouter(DomainLayersFactory, configs.NewConfig())
 	s := httptest.NewServer(engine)
 
 	response, _ := http.Get(fmt.Sprintf("%s/ping", s.URL))
@@ -85,4 +85,29 @@ func Test_HandlePanicRecoveryMiddleware_unhandled_error(t *testing.T) {
 
 	assert.Equal(t, http.StatusInternalServerError, w.Code)
 	assert.Equal(t, "{\"code\":500,\"status\":\"Internal Server Error\",\"message\":\"unhandled error: {error}\"}", w.Body.String())
+}
+
+func Test_BasicAuthenticationMiddleware(t *testing.T) {
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	c.Request = &http.Request{}
+
+	BasicAuthenticationMiddleware(c, "admin", "password")
+
+	assert.Equal(t, http.StatusUnauthorized, w.Code)
+	assert.Equal(t, "{\"code\":401,\"status\":\"Unauthorized\",\"message\":\"invalid credentials\"}", w.Body.String())
+}
+
+func TestNewRouter(t *testing.T) {
+	controllersFactoryMock := factories.NewControllersFactory(nil, configs.NewConfig())
+
+	gin.SetMode(gin.TestMode)
+	router := NewRouter(controllersFactoryMock, configs.NewConfig())
+
+	w := httptest.NewRecorder()
+
+	req, _ := http.NewRequest(http.MethodGet, "/v1", nil)
+	router.ServeHTTP(w, req)
+	assert.Equal(t, http.StatusUnauthorized, w.Code)
+	assert.Equal(t, "{\"code\":401,\"status\":\"Unauthorized\",\"message\":\"invalid credentials\"}", w.Body.String())
 }

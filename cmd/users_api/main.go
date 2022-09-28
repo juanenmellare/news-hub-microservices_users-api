@@ -26,7 +26,7 @@ func main() {
 	domainLayersFactory := factories.NewControllersFactory(relationalDatabase, config)
 
 	port := ":" + config.GetPort()
-	if err := api.NewRouter(domainLayersFactory).Run(port); err != nil {
+	if err := api.NewRouter(domainLayersFactory, config).Run(port); err != nil {
 		logger.Fatalf("Error while trying to create the router: " + err.Error())
 	}
 }

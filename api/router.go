@@ -3,6 +3,8 @@ package api
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"net/http"
+	"news-hub-microservices_users-api/configs"
 	"news-hub-microservices_users-api/internal/errors"
 	"news-hub-microservices_users-api/internal/factories"
 )
@@ -24,7 +26,15 @@ func HandlePanicRecoveryMiddleware(context *gin.Context, i interface{}) {
 	context.JSON(apiError.Code, apiError)
 }
 
-func NewRouter(controllers factories.ControllersFactory) *gin.Engine {
+func BasicAuthenticationMiddleware(c *gin.Context, candidateUsername, candidatePassword string) {
+	username, password, hasAuth := c.Request.BasicAuth()
+	if !hasAuth || username != candidateUsername || password != candidatePassword {
+		c.JSON(http.StatusUnauthorized, errors.NewUnauthorizedApiError("invalid credentials"))
+		c.Abort()
+	}
+}
+
+func NewRouter(controllers factories.ControllersFactory, config configs.Config) *gin.Engine {
 	router := gin.Default()
 	router.Use(gin.CustomRecovery(HandlePanicRecoveryMiddleware))
 
@@ -32,9 +42,12 @@ func NewRouter(controllers factories.ControllersFactory) *gin.Engine {
 
 	usersController := controllers.GetUsersController()
 	v1 := router.Group("/v1")
+	v1.Use(func(c *gin.Context) {
+		BasicAuthenticationMiddleware(c, config.GetBasicAuthUsername(), config.GetBasicAuthPassword())
+	})
 	{
-		v1.GET("/", usersController.Get)
-		v1.POST("/", usersController.Create)
+		v1.GET("", usersController.Get)
+		v1.POST("", usersController.Create)
 		v1.POST("/login", usersController.Authenticate)
 	}
 
