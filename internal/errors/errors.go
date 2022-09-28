@@ -33,6 +33,10 @@ func NewBadRequestApiError(message string) *ApiError {
 	return newApiError(http.StatusBadRequest, message)
 }
 
+func NewUnauthorizedApiError(message string) *ApiError {
+	return newApiError(http.StatusUnauthorized, message)
+}
+
 func NewNotFoundError(message string) *ApiError {
 	return newApiError(http.StatusNotFound, message)
 }

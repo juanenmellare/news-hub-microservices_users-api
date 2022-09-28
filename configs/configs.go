@@ -17,6 +17,8 @@ type Config interface {
 	GetBCryptCost() int
 	GetTokenUserSecretKey() string
 	GetTokenUserExpirationHours() int
+	GetBasicAuthUsername() string
+	GetBasicAuthPassword() string
 }
 
 type config struct {
@@ -29,6 +31,8 @@ type config struct {
 	bCryptCost               int
 	userTokenSecretKey       string
 	userTokenExpirationHours int
+	basicAuthUsername        string
+	basicAuthPassword        string
 }
 
 func NewConfig() Config {
@@ -42,6 +46,8 @@ func NewConfig() Config {
 		bCryptCost:               getIntValueOrDefault("BCRYPT_COST", bcrypt.MinCost),
 		userTokenSecretKey:       getStringValueOrDefault("USER_TOKEN_SECRET_KEY", "foo"),
 		userTokenExpirationHours: getIntValueOrDefault("USER_TOKEN_EXPIRATION_HOURS", 1),
+		basicAuthUsername:        getStringValueOrDefault("BASIC_AUTH_USERNAME", "admin"),
+		basicAuthPassword:        getStringValueOrDefault("BASIC_AUTH_PASSWORD", "password"),
 	}
 }
 
@@ -102,4 +108,12 @@ func (c config) GetTokenUserSecretKey() string {
 
 func (c config) GetTokenUserExpirationHours() int {
 	return c.userTokenExpirationHours
+}
+
+func (c config) GetBasicAuthUsername() string {
+	return c.basicAuthUsername
+}
+
+func (c config) GetBasicAuthPassword() string {
+	return c.basicAuthPassword
 }
