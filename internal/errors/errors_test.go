@@ -38,6 +38,16 @@ func Test_NewBadRequestApiError(t *testing.T) {
 	assert.Equal(t, err.Error(), apiError.Message)
 }
 
+func Test_NewUnauthorizedApiError(t *testing.T) {
+	expectedMessage := "invalid credentials"
+
+	apiError := NewUnauthorizedApiError(expectedMessage)
+
+	assert.Equal(t, "Unauthorized", apiError.Status)
+	assert.Equal(t, http.StatusUnauthorized, apiError.Code)
+	assert.Equal(t, expectedMessage, apiError.Message)
+}
+
 func Test_NewError(t *testing.T) {
 	message := "panic"
 	err := NewError(message)
@@ -83,6 +93,12 @@ func TestNewAlreadyExistModelError(t *testing.T) {
 }
 
 func TestNewInvalidEmailOrPasswordError(t *testing.T) {
+	err := NewInvalidEmailOrPasswordError()
+
+	assert.Equal(t, "Invalid Email or Password", err.Message)
+}
+
+func TestV1Group(t *testing.T) {
 	err := NewInvalidEmailOrPasswordError()
 
 	assert.Equal(t, "Invalid Email or Password", err.Message)
