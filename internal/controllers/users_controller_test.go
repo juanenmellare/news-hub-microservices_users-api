@@ -117,7 +117,7 @@ func Test_usersController_Get(t *testing.T) {
 
 	controller.Get(context)
 
-	assert.Equal(t, "{\"firstName\":\"foo-firstname\",\"lastName\":\"foo-lastname\",\"email\":\"foo-email@email.com\"}", writer.Body.String())
+	assert.Equal(t, "{\"id\":\"50bed1c2-a6d6-46ff-853c-e2803d67daa6\",\"firstName\":\"foo-firstname\",\"lastName\":\"foo-lastname\",\"email\":\"foo-email@email.com\"}", writer.Body.String())
 }
 
 func Test_usersController_Get_not_found_user_from_token(t *testing.T) {
