@@ -3,6 +3,7 @@ package rest
 import (
 	"fmt"
 	"github.com/gofrs/uuid"
+	"news-hub-microservices_users-api/internal/models"
 )
 
 type CreateUserResponse struct {
@@ -26,15 +27,17 @@ func NewAuthenticateResponse(token string) *AuthenticateResponse {
 }
 
 type GetResponse struct {
+	Id        string `json:"id"`
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
 	Email     string `json:"email"`
 }
 
-func NewGetResponse(firstName, lastName, email string) *GetResponse {
+func NewGetResponse(user *models.User) *GetResponse {
 	return &GetResponse{
-		firstName,
-		lastName,
-		email,
+		user.ID.String(),
+		user.FirstName,
+		user.LastName,
+		user.Email,
 	}
 }

@@ -28,8 +28,9 @@ func TestNewCreateUserResponse(t *testing.T) {
 func TestNewGetResponse(t *testing.T) {
 	userMock := models.NewUserBuilder().Build()
 
-	response := NewGetResponse(userMock.FirstName, userMock.LastName, userMock.Email)
+	response := NewGetResponse(&userMock)
 
+	assert.Equal(t, userMock.ID.String(), response.Id)
 	assert.Equal(t, userMock.FirstName, response.FirstName)
 	assert.Equal(t, userMock.LastName, response.LastName)
 	assert.Equal(t, userMock.Email, response.Email)

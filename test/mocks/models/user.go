@@ -16,7 +16,7 @@ func (u UserBuilder) Build() models.User {
 }
 
 func NewUserBuilder() *UserBuilder {
-	uuidMock, _ := uuid.NewV4()
+	uuidMock, _ := uuid.FromString("50bed1c2-a6d6-46ff-853c-e2803d67daa6")
 
 	return &UserBuilder{
 		user: models.User{
