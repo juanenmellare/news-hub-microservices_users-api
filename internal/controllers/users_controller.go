@@ -54,7 +54,7 @@ func (u usersController) Get(context *gin.Context) {
 		panic(errors.NewNotFoundError("user from token not found"))
 	}
 
-	response := rest.NewGetResponse(user.FirstName, user.LastName, user.Email)
+	response := rest.NewGetResponse(user)
 
 	context.JSON(http.StatusOK, &response)
 }
