@@ -87,7 +87,7 @@ func Test_HandlePanicRecoveryMiddleware_unhandled_error(t *testing.T) {
 	assert.Equal(t, "{\"code\":500,\"status\":\"Internal Server Error\",\"message\":\"unhandled error: {error}\"}", w.Body.String())
 }
 
-func Test_BasicAuthenticationMiddleware(t *testing.T) {
+func Test_BasicAuthenticationMiddleware_Unauthorized_empty(t *testing.T) {
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
 	c.Request = &http.Request{}
@@ -96,6 +96,62 @@ func Test_BasicAuthenticationMiddleware(t *testing.T) {
 
 	assert.Equal(t, http.StatusUnauthorized, w.Code)
 	assert.Equal(t, "{\"code\":401,\"status\":\"Unauthorized\",\"message\":\"invalid credentials\"}", w.Body.String())
+}
+
+func Test_BasicAuthenticationMiddleware_Unauthorized_basic_incomplete(t *testing.T) {
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	c.Request = &http.Request{
+		Header: map[string][]string{},
+	}
+	c.Request.Header.Set("Authorization", "Basic")
+
+	BasicAuthenticationMiddleware(c, "admin", "password")
+
+	assert.Equal(t, http.StatusUnauthorized, w.Code)
+	assert.Equal(t, "{\"code\":401,\"status\":\"Unauthorized\",\"message\":\"invalid credentials\"}", w.Body.String())
+}
+
+func Test_BasicAuthenticationMiddleware_Unauthorized_basic_base64_bad_encode(t *testing.T) {
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	c.Request = &http.Request{
+		Header: map[string][]string{},
+	}
+	c.Request.Header.Set("Authorization", "Basic ;;;;;;")
+
+	BasicAuthenticationMiddleware(c, "admin", "password")
+
+	assert.Equal(t, http.StatusUnauthorized, w.Code)
+	assert.Equal(t, "{\"code\":401,\"status\":\"Unauthorized\",\"message\":\"invalid credentials\"}", w.Body.String())
+}
+
+func Test_BasicAuthenticationMiddleware_Unauthorized_basic_base64_bad_format(t *testing.T) {
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	c.Request = &http.Request{
+		Header: map[string][]string{},
+	}
+	c.Request.Header.Set("Authorization", "Basic Zm9v")
+
+	BasicAuthenticationMiddleware(c, "admin", "password")
+
+	assert.Equal(t, http.StatusUnauthorized, w.Code)
+	assert.Equal(t, "{\"code\":401,\"status\":\"Unauthorized\",\"message\":\"invalid credentials\"}", w.Body.String())
+}
+
+func Test_BasicAuthenticationMiddleware(t *testing.T) {
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	c.Request = &http.Request{
+		Header: map[string][]string{},
+	}
+	c.Request.Header.Set("Authorization", "Basic YWRtaW46cGFzc3dvcmQ=, Bearer foo")
+
+	BasicAuthenticationMiddleware(c, "admin", "password")
+
+	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, "Bearer foo", c.Request.Header.Get("Authorization"))
 }
 
 func TestNewRouter(t *testing.T) {
